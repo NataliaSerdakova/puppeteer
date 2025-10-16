@@ -1,32 +1,26 @@
 const puppeteer = require('puppeteer');
-let browser;
+let browser, page;
 
-beforeEach(async () => {
-	browser = await puppeteer.launch({
-		headless: false
-	});
+beforeAll(async () => {
+  jest.setTimeout(30000);
+	browser = await puppeteer.launch({headless: false});
 });
 
-afterEach(async () => {
+afterAll(async () => {
 	await browser.close();
 });
 
 describe("Github page tests", () => {
-	let page;
-
-	beforeEach(async () => {
-		jest.setTimeout(30000);
+  beforeEach(async () => {
 		page = await browser.newPage();
-		await page.goto("https://github.com/team"); // подгружаем страницу /team
+		await page.goto("https://github.com/team");
 	});
 
 	afterEach(async () => {
-		jest.setTimeout(30000);
 		await page.close();
 	});
 
 	test("The h1 header content'", async () => {
-		jest.setTimeout(30000);
 		const firstLink = await page.$("header div div a");
 		await firstLink.click();
 		await page.waitForSelector('h1');
@@ -41,70 +35,52 @@ describe("Github page tests", () => {
 
 	test("The page contains Sign in button", async () => {
 		const btnSelector = ".btn-large-mktg.btn-mktg";
-		await page.waitForSelector(btnSelector, {
-			visible: true,
-		});
+		await page.waitForSelector(btnSelector, {visible: true,});
 		const actual = await page.$eval(btnSelector, link => link.textContent);
 		expect(actual).toContain("Get started with Team")
 	}, 200);
 });
 
 describe("GitHub Advanced Security Demo Request Test", () => {
-	let page;
-
 	beforeEach(async () => {
-		jest.setTimeout(30000);
 		page = await browser.newPage();
 		await page.goto("https://github.com/features/copilot");
 	});
 
 	afterEach(async () => {
-		jest.setTimeout(30000);
 		await page.close();
 	});
 
 	test("The first link attribute", async () => {
-		jest.setTimeout(40000);
 		const buttonGetStarted = await page.waitForSelector('a[data-analytics-event*="get_started_for_free"]');
 		await buttonGetStarted.click();
-
 		await page.waitForSelector('h1');
-
 		const title = await page.$eval('h1.text-center[data-view-component]', element => element.innerText);
 		expect(title).toEqual('Try Copilot Pro for 30 days free');
 	}, 30000);
 });
 
 describe("Copilot Feature Page Tests", () => {
-	let page;
-
 	beforeEach(async () => {
-		jest.setTimeout(30000);
 		page = await browser.newPage();
 		await page.goto("https://github.com/security/advanced-security");
 	});
 
 	afterEach(async () => {
-		jest.setTimeout(30000);
 		await page.close();
 	});
 
 	test("Requesting a demo redirects to the correct page", async () => {
-		jest.setTimeout(40000);
 		const requestDemoButton = await page.waitForSelector('a.Primer_Brand__Button-module__Button--primary___xIC7G[href*="/security/advanced-security/demo"]');
 		await requestDemoButton.click();
-
 		await page.waitForSelector('h1');
-
 		const title = await page.$eval('h1.ContactSalesTemplate-module__heading--MdU6z', el => el.innerText.trim());
 		expect(title).toEqual('Get started with GitHub Advanced Security');
 	}, 40000);
 
 	test("The page contains GitHub Security link", async () => {
 		const linkSelector = '.Primer_Brand__SubNav-module__SubNav__heading___MAxf6';
-		await page.waitForSelector(linkSelector, {
-			visible: true
-		});
+		await page.waitForSelector(linkSelector, {visible: true});
 		const actual = await page.$eval(linkSelector, link => link.textContent);
 		expect(actual).toContain("GitHub Security");
 	}, 200);
