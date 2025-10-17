@@ -2,22 +2,19 @@ const puppeteer = require('puppeteer');
 let browser, page;
 
 beforeAll(async () => {
-  jest.setTimeout(30000);
+  jest.setTimeout(80000);
 	browser = await puppeteer.launch({headless: false});
+  page = await browser.newPage();
 });
 
 afterAll(async () => {
+  await page.close();
 	await browser.close();
 });
 
 describe("Github page tests", () => {
   beforeEach(async () => {
-		page = await browser.newPage();
 		await page.goto("https://github.com/team");
-	});
-
-	afterEach(async () => {
-		await page.close();
 	});
 
 	test("The h1 header content'", async () => {
@@ -43,12 +40,7 @@ describe("Github page tests", () => {
 
 describe("GitHub Advanced Security Demo Request Test", () => {
 	beforeEach(async () => {
-		page = await browser.newPage();
 		await page.goto("https://github.com/features/copilot");
-	});
-
-	afterEach(async () => {
-		await page.close();
 	});
 
 	test("The first link attribute", async () => {
@@ -62,12 +54,7 @@ describe("GitHub Advanced Security Demo Request Test", () => {
 
 describe("Copilot Feature Page Tests", () => {
 	beforeEach(async () => {
-		page = await browser.newPage();
 		await page.goto("https://github.com/security/advanced-security");
-	});
-
-	afterEach(async () => {
-		await page.close();
 	});
 
 	test("Requesting a demo redirects to the correct page", async () => {
